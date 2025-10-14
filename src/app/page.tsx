@@ -8,10 +8,21 @@ import morphAnimation from "../../public/animations/Morphing Animation.json";
 
 export default function LandingPage() {
   const [isMounted, setIsMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const localLottieRef = useRef<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   if (!isMounted) return null;
@@ -19,7 +30,13 @@ export default function LandingPage() {
   return (
     <div className="bg-white text-slate-800 font-sans">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-slate-200">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/80 backdrop-blur-sm shadow-md"
+            : "md:bg-transparent md:backdrop-blur-none md:shadow-none"
+        } floating-navbar`}
+      >
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Heart className="w-8 h-8 text-blue-600" />
