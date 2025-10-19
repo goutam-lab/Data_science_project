@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { User, Activity, Target, Heart, Zap, Flame } from 'lucide-react';
+import { User, Target, Heart, Zap, Flame, BarChart } from 'lucide-react';
 import Lottie from "lottie-react";
 import loadingAnimation from "../../../public/animations/loading.json";
+import Navbar from '../../component/Navbar';
 
 interface UserData {
     _id: string;
@@ -97,20 +98,7 @@ export default function DashboardPage() {
     
     return (
         <div className="min-h-screen bg-slate-100">
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-slate-900">Welcome back, {user.name}!</h1>
-                    <button 
-                        onClick={() => {
-                            localStorage.removeItem('smartDietUser');
-                            window.location.href = '/login';
-                        }}
-                        className="text-sm font-medium text-red-600 hover:text-red-800"
-                    >
-                        Log Out
-                    </button>
-                </div>
-            </header>
+            <Navbar userName={user.name} />
             <main>
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0">
@@ -159,7 +147,7 @@ export default function DashboardPage() {
                             </div>
 
                              {/* Macronutrients Card (Example) */}
-                            <div className="bg-white overflow-hidden shadow rounded-lg p-6 md:col-span-2">
+                            <div className="bg-white overflow-hidden shadow rounded-lg p-6 md:col-span-1">
                                 <h3 className="text-lg font-medium text-gray-900 flex items-center mb-4">
                                     <Flame className="w-6 h-6 mr-3 text-orange-500"/> Daily Macronutrient Goals
                                 </h3>
@@ -177,6 +165,15 @@ export default function DashboardPage() {
                                         <p className="text-2xl font-bold text-amber-600">{Math.round((tdee * 0.3) / 9)}g</p>
                                         <p className="text-xs font-medium text-gray-500">Fat (30%)</p>
                                     </div>
+                                </div>
+                            </div>
+                            {/* New Graph Card */}
+                            <div className="bg-white overflow-hidden shadow rounded-lg p-6 md:col-span-2">
+                                <h3 className="text-lg font-medium text-gray-900 flex items-center mb-4">
+                                    <BarChart className="w-6 h-6 mr-3 text-indigo-500"/> Macronutrient Distribution
+                                </h3>
+                                <div className="flex justify-center items-center">
+                                    <img src={`http://127.0.0.1:5000/macronutrient_chart/${user._id}`} alt="Macronutrient Distribution" />
                                 </div>
                             </div>
                         </div>

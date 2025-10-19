@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 from passlib.hash import pbkdf2_sha256 as sha256
 from flask_cors import CORS
 from bson import ObjectId  # Important: To handle MongoDB's unique IDs
+import matplotlib.pyplot as plt
+import io
 
 # Load environment variables from .env file
 load_dotenv()
@@ -132,6 +134,48 @@ def dashboard(user_id):
             return jsonify({"message": "User not found"}), 404
     except Exception:
         return jsonify({"message": "Invalid User ID format"}), 400
+
+@app.route("/macronutrient_chart/<user_id>", methods=["GET"])
+def macronutrient_chart(user_id):
+    """Generates and returns a macronutrient distribution chart."""
+    try:
+        user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user or 'onboarding' not in user:
+            return jsonify({"message": "User or onboarding data not found"}), 404
+
+        onboarding = user['onboarding']
+        
+        # Basic BMR and TDEE calculation
+        activity_multipliers = {
+            'sedentary': 1.2, 'light': 1.375, 'moderate': 1.55, 
+            'active': 1.725, 'extra': 1.9
+        }
+        bmr = (10 * float(onboarding['current_weight'])) + (6.25 * float(onboarding['height'])) - (5 * float(onboarding['age']))
+        bmr += 5 if onboarding['gender'] == 'male' else -161
+        tdee = bmr * activity_multipliers.get(onboarding['activity_level'], 1.55)
+
+        # Macronutrient goals (example percentages)
+        macros = {
+            'Protein (40%)': (tdee * 0.4) / 4,
+            'Carbs (30%)': (tdee * 0.3) / 4,
+            'Fat (30%)': (tdee * 0.3) / 9
+        }
+
+        # Plotting with Matplotlib
+        fig, ax = plt.subplots()
+        ax.bar(macros.keys(), macros.values(), color=['#3B82F6', '#8B5CF6', '#F59E0B'])
+        ax.set_ylabel('Grams (g)')
+        ax.set_title('Daily Macronutrient Goals')
+        
+        # Save to an in-memory buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+
+        return send_file(buf, mimetype='image/png')
+
+    except Exception as e:
+        return jsonify({"message": f"An error occurred: {e}"}), 500
 
 
 if __name__ == "__main__":

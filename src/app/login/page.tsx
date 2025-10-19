@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react";
 
 // Sample comments for the floating effect
 const comments = [
@@ -81,11 +81,14 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900">
-            {isLogin ? "Welcome Back" : "Create Account"}
-          </h1>
+            <div className="flex justify-center items-center space-x-2">
+                <Heart className="w-8 h-8 text-blue-600" />
+                <h1 className="text-3xl font-extrabold text-slate-900">
+                    {isLogin ? "Welcome Back to SmartDiet" : "Join SmartDiet"}
+                </h1>
+          </div>
           <p className="text-slate-600 mt-2">
-            {isLogin ? "Sign in to continue your journey." : "Sign up to get started."}
+            {isLogin ? "Sign in to continue your journey." : "Sign up to get started on your personalized diet plan."}
           </p>
         </div>
 
