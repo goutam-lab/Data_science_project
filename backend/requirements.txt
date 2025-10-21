@@ -2,5 +2,10 @@ Flask
 pymongo[srv]
 python-dotenv
 flask-cors
-passlib
+bcrypt
 matplotlib
+cloudinary
+apscheduler
+emails
+pandas
+requests
